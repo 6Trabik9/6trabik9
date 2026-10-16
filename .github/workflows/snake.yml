@@ -1,0 +1,34 @@
+name: Generate Contribution Snake Animation 🐾
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate Snake SVG (Pink & Dark)
+        uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-snake-pink.svg?palette=github-dark&color_snake=%23ff1493&color_dots=%23161b22,%234a153b,%23a31d68,%23e0258b,%23ff69b4
+            dist/github-snake-blood.svg?palette=github-dark&color_snake=%23ff003c&color_dots=%23161b22,%233d000c,%237a0018,%23b80024,%23ff003c
+
+      - name: Push to Output Branch
+        uses: crazy-max/ghaction-github-pages@v3.1.0
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
